@@ -77,6 +77,13 @@ def get_iframe_dimensions():
 if selected_option == "Dashboard":
     custom_title("Groundwater / Surface Water Interactions", 28)
 
+    # Add a short description of the project at the bottom of the dashboard
+    st.markdown("""
+    **Xwulqw’selu Connections** brings people together to learn where streams go dry in the Xwulqw’selu Watershed and how they could begin to flow more. The amount of water flowing in the Koksilah River during summer is dangerously low, leading to streams that feed the river going bone dry. This situation impacts local farmers who struggle to irrigate their crops, while salmon populations face significant survival challenges.
+
+    The **SWAT-MODFLOW model** is employed to assess the interactions between groundwater and surface water, providing insights into the hydrological dynamics of the watershed and identifying strategies for improving water flow in the river system. For more information about the project, please visit [Xwulqw’selu Connections](https://onlineacademiccommunity.uvic.ca/xwulqwselu/).
+    """)
+
     # Calculate average and standard deviation for each cell (Row, Column) per month
     monthly_stats = df.groupby(['Month', 'Row', 'Column'])['Rate'].agg(['mean', 'std']).reset_index()
     monthly_stats.columns = ['Month', 'Row', 'Column', 'Average Rate', 'Standard Deviation']
@@ -167,7 +174,7 @@ if selected_option == "Dashboard":
 # Report view
 elif selected_option == "View Report":
     st.title("Model Validation Report")
-
+    
     # Add a short description
     st.markdown("""
     This report provides a comprehensive validation of the SWAT-MODFLOW model 
@@ -175,7 +182,7 @@ elif selected_option == "View Report":
     detailed analysis of the model's performance, statistical metrics, and 
     visualizations that illustrate the model's predictions against observed data.
     """)
-    
+
     # Path to the PDF file
     PDF_FILE = Path(__file__).parent / 'data/koki_swatmf_report.pdf'
     
