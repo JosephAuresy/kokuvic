@@ -1,6 +1,6 @@
 # :earth_americas: Koksilah dashboard template
 
-A simple Streamlit app showing the SWAT-MODFLOW results fmor the Koksilah watershed.
+A Streamlit app showing the SWAT-MODFLOW results fmor the Koksilah watershed.
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://gdp-dashboard-template.streamlit.app/)
 
