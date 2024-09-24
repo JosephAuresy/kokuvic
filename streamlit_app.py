@@ -141,23 +141,22 @@ elif selected_option == "View Report":
     # Path to the PDF file
     PDF_FILE = Path(__file__).parent / 'data/koki_swatmf_report.pdf'
     
-    # Read and encode the PDF file each time the button is clicked
-    if st.button("Load PDF"):
-        with open(PDF_FILE, "rb") as f:
-            pdf_data = f.read()
-            pdf_base64 = base64.b64encode(pdf_data).decode('utf-8')
-        
-        # Display the PDF file using an iframe
-        st.markdown(
-            f'<iframe src="data:application/pdf;base64,{pdf_base64}" width="100%" height="600"></iframe>', 
-            unsafe_allow_html=True
-        )
+    # Read and encode the PDF file
+    with open(PDF_FILE, "rb") as f:
+        pdf_data = f.read()
+        pdf_base64 = base64.b64encode(pdf_data).decode('utf-8')
 
-        # Option to download the PDF file
-        st.download_button(
-            label="Download PDF",
-            data=pdf_data,  # Use raw PDF data for downloading
-            file_name="koki_swatmf_report.pdf",
-            mime="application/pdf",
-            key="download_button_report"
-        )
+    # Display the PDF file using an iframe
+    st.markdown(
+        f'<iframe src="data:application/pdf;base64,{pdf_base64}" width="100%" height="600"></iframe>', 
+        unsafe_allow_html=True
+    )
+
+    # Option to download the PDF file
+    st.download_button(
+        label="Download PDF",
+        data=pdf_data,  # Use raw PDF data for downloading
+        file_name="koki_swatmf_report.pdf",
+        mime="application/pdf",
+        key="download_button_report"
+    )
