@@ -141,20 +141,21 @@ elif selected_option == "View Report":
     # Path to the PDF file
     PDF_FILE = Path(__file__).parent / 'data/koki_swatmf_report.pdf'
     
-    # Read and encode the PDF file
-    with open(PDF_FILE, "rb") as f:
-        pdf_base64 = base64.b64encode(f.read()).decode('utf-8')
+    # Read and encode the PDF file once
+    if 'pdf_base64' not in st.session_state:
+        with open(PDF_FILE, "rb") as f:
+            st.session_state.pdf_base64 = base64.b64encode(f.read()).decode('utf-8')
     
     # Display the PDF file using an iframe
     st.markdown(
-        f'<iframe src="data:application/pdf;base64,{pdf_base64}" width="100%" height="600"></iframe>', 
+        f'<iframe src="data:application/pdf;base64,{st.session_state.pdf_base64}" width="100%" height="600"></iframe>', 
         unsafe_allow_html=True
     )
     
     # Option to download the PDF file
     st.download_button(
         label="Download PDF",
-        data=pdf_base64,
+        data=st.session_state.pdf_base64,
         file_name="koki_swatmf_report.pdf",
         mime="application/pdf",
         key="download_button_report"
