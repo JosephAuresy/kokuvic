@@ -63,8 +63,14 @@ if df.empty:
     st.stop()
 
 # Dashboard view
+def custom_title(text, size):
+    st.markdown(
+        f"<h1 style='font-size:{size}px;'>{text}</h1>",
+        unsafe_allow_html=True
+    )
+
 if selected_option == "Dashboard":
-    st.title("Groundwater / Surface Water Interactions")
+    custom_title("Groundwater / Surface Water Interactions", 28)
 
     # Calculate average and standard deviation for each cell (Row, Column) per month
     monthly_stats = df.groupby(['Month', 'Row', 'Column'])['Rate'].agg(['mean', 'std']).reset_index()
