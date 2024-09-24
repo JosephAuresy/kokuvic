@@ -155,7 +155,7 @@ if selected_option == "Dashboard":
 
 # Report view
 elif selected_option == "View Report":
-    st.title("PDF Report Viewer")
+    st.title("Calibration report")
     
     # Path to the PDF file
     PDF_FILE = Path(__file__).parent / 'data/koki_swatmf_report.pdf'
