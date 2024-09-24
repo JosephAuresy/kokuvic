@@ -62,12 +62,17 @@ if df.empty:
     st.error("The data file is empty or could not be read.")
     st.stop()
 
-# Dashboard view
+# Custom title function
 def custom_title(text, size):
     st.markdown(
         f"<h1 style='font-size:{size}px;'>{text}</h1>",
         unsafe_allow_html=True
     )
+
+# Set the width and height based on the device screen size
+def get_iframe_dimensions():
+    # Default to desktop dimensions; modify if needed for your design
+    return "100%", "600"
 
 if selected_option == "Dashboard":
     custom_title("Groundwater / Surface Water Interactions", 28)
@@ -107,7 +112,7 @@ if selected_option == "Dashboard":
         r = int(row['Row']) - 1
         c = int(row['Column']) - 1
         if 0 <= r < grid.shape[0] and 0 <= c < grid.shape[1]:
-            grid[r, c] = row['Average Rate'] if stat_type == 'Average Rate [m3/day]' else row['Standard Deviation']
+            grid[r, c] = row['Average Rate'] if stat_type == 'Average Rate [m³/day]' else row['Standard Deviation']
 
     if stat_type == 'Standard Deviation':
         zmin = 0
