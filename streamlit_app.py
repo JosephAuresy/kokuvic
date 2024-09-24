@@ -1,151 +1,158 @@
 import streamlit as st
 import pandas as pd
-import math
+import numpy as np
+import plotly.graph_objects as go
 from pathlib import Path
 
 # Set the title and favicon that appear in the Browser's tab bar.
 st.set_page_config(
-    page_title='GDP dashboard',
-    page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
+    page_title='Koki dashboard',
+    page_icon=':earth_americas:',  # This is an emoji shortcode. Could be a URL too.
 )
 
 # -----------------------------------------------------------------------------
 # Declare some useful functions.
 
 @st.cache_data
-def get_gdp_data():
-    """Grab GDP data from a CSV file.
-
-    This uses caching to avoid having to read the file every time. If we were
-    reading from an HTTP endpoint instead of a file, it's a good idea to set
-    a maximum age to the cache with the TTL argument: @st.cache_data(ttl='1d')
+# Define the function to read and process data
+def process_swatmf_data(file_path):
     """
+    Reads the SWAT-MF groundwater/surface water interaction data and returns a DataFrame
+    with Year, Month, Layer, Row, Column, and Rate information.
+    """
+    # Initialize lists to hold data
+    data = []
+    current_month = None
+    current_year = None
 
-    # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
-    raw_gdp_df = pd.read_csv(DATA_FILENAME)
+    # Read the file line by line
+    with open(file_path, 'r') as file:
+        for line in file:
+            if 'month:' in line:
+                # Extract month and year
+                parts = line.split()
+                try:
+                    current_month = int(parts[1])
+                    current_year = int(parts[3])
+                except (ValueError, IndexError):
+                    continue  # Skip if there's an issue parsing month/year
+            elif 'Layer' in line:
+                # Read header line (skip)
+                continue
+            elif line.strip() == '':
+                # Empty line (skip)
+                continue
+            else:
+                # Extract data
+                parts = line.split()
+                if len(parts) == 4:
+                    try:
+                        layer = int(parts[0])
+                        row = int(parts[1])
+                        column = int(parts[2])
+                        rate = float(parts[3])
+                        data.append([current_year, current_month, layer, row, column, rate])
+                    except ValueError:
+                        continue  # Skip if there's an issue parsing the data
 
-    MIN_YEAR = 1960
-    MAX_YEAR = 2022
+    # Convert data to DataFrame
+    df = pd.DataFrame(data, columns=['Year', 'Month', 'Layer', 'Row', 'Column', 'Rate'])
+    
+    return df
 
-    # The data above has columns like:
-    # - Country Name
-    # - Country Code
-    # - [Stuff I don't care about]
-    # - GDP for 1960
-    # - GDP for 1961
-    # - GDP for 1962
-    # - ...
-    # - GDP for 2022
-    #
-    # ...but I want this instead:
-    # - Country Name
-    # - Country Code
-    # - Year
-    # - GDP
-    #
-    # So let's pivot all those year-columns into two: Year and GDP
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year',
-        'GDP',
-    )
+# Use Path to specify the location of your data file
+DATA_FILENAME = Path(__file__).parent / 'data/swatmf_out_MF_gwsw_monthly.csv'
 
-    # Convert years from string to integers
-    gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
+# Call the function to get the processed data
+df = process_swatmf_data(DATA_FILENAME)
 
-    return gdp_df
-
-gdp_df = get_gdp_data()
+# Check if the DataFrame is empty
+if df.empty:
+    st.error("The data file is empty or could not be read.")
+    st.stop()
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
 
-# Set the title that appears at the top of the page.
-'''
-# :earth_americas: GDP dashboard
+st.title("Groundwater / Surface Water Interactions")
 
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
-'''
+# Calculate average and standard deviation for each cell (Row, Column) per month
+monthly_stats = df.groupby(['Month', 'Row', 'Column'])['Rate'].agg(['mean', 'std']).reset_index()
+monthly_stats.columns = ['Month', 'Row', 'Column', 'Average Rate', 'Standard Deviation']
 
-# Add some spacing
-''
-''
+# Get global min and max to keep the colorbar consistent across months
+global_min = monthly_stats[['Average Rate', 'Standard Deviation']].min().min()
+global_max = monthly_stats[['Average Rate', 'Standard Deviation']].max().max()
 
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
+# Set zmid to stretch positive values more
+zmid = global_min / 2  # Adjust to emphasize positive values
 
-from_year, to_year = st.slider(
-    'Which years are you interested in?',
-    min_value=min_value,
-    max_value=max_value,
-    value=[min_value, max_value])
+# Get unique months
+unique_months = sorted(monthly_stats['Month'].unique())
 
-countries = gdp_df['Country Code'].unique()
+# Climate, Land Use, and Water Use options
+climate_options = ['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s']
+landuse_options = ['1954', '1972', '2000', '2010', '2020']
+wateruse_options = ['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s']
 
-if not len(countries):
-    st.warning("Select at least one country")
+# Dropdowns for selecting scenarios
+selected_climate = st.selectbox("Climate Scenario", climate_options, index=6)
+selected_landuse = st.selectbox("Land Use Scenario", landuse_options, index=3)
+selected_wateruse = st.selectbox("Water Use Scenario", wateruse_options, index=6)
 
-selected_countries = st.multiselect(
-    'Which countries would you like to view?',
-    countries,
-    ['DEU', 'FRA', 'GBR', 'BRA', 'MEX', 'JPN'])
+# Dropdown for selecting month
+selected_month = st.selectbox("Month", unique_months, index=0)
 
-''
-''
-''
+# Radio buttons for selecting statistic type
+stat_type = st.radio("Statistic Type", ['Average Rate [m3/day]', 'Standard Deviation'], index=0)
 
-# Filter the data
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries))
-    & (gdp_df['Year'] <= to_year)
-    & (from_year <= gdp_df['Year'])
-]
+# Filter data for the selected month
+df_filtered = monthly_stats[monthly_stats['Month'] == selected_month]
 
-st.header('GDP over time', divider='gray')
+# Identify maximum rows and columns
+max_row = df_filtered['Row'].max()
+max_column = df_filtered['Column'].max()
 
-''
+# Create an empty grid with maximum rows and columns
+grid = np.full((int(max_row), int(max_column)), np.nan)  # Using NaN to represent no data
 
-st.line_chart(
-    filtered_gdp_df,
-    x='Year',
-    y='GDP',
-    color='Country Code',
+# Fill the grid with the selected statistic values
+for _, row in df_filtered.iterrows():
+    r = int(row['Row']) - 1
+    c = int(row['Column']) - 1
+    if 0 <= r < grid.shape[0] and 0 <= c < grid.shape[1]:
+        grid[r, c] = row['Average Rate'] if stat_type == 'Average Rate [m3/day]' else row['Standard Deviation']
+
+# Adjust zmin and zmax for consistent color scaling
+if stat_type == 'Standard Deviation':
+    zmin = 0  # Standard deviation cannot be negative
+    zmax = global_max
+else:
+    zmin = global_min
+    zmax = global_max
+
+# Create heatmap with global min, max and a midpoint to stretch positive values
+fig = go.Figure(data=go.Heatmap(
+    z=grid,
+    colorscale='earth_r',  # Color scale
+    zmid=zmid,  # Stretch to emphasize positive values
+    zmin=zmin,  # Keep colorbar consistent across months
+    zmax=zmax,
+    colorbar=dict(title=stat_type),
+    hovertemplate='%{z:.2f}<extra></extra>',  # Display actual values
+))
+
+# Update the layout with a custom title
+fig.update_layout(
+    title=f'{stat_type} for Month {selected_month}',
+    xaxis_title=None,  # Remove X-axis title
+    yaxis_title=None,  # Remove Y-axis title
+    xaxis=dict(showticklabels=False, ticks='', showgrid=False),
+    yaxis=dict(showticklabels=False, ticks='', autorange='reversed', showgrid=False),
+    plot_bgcolor='rgba(240, 240, 240, 0.8)',  # Light gray background for the plot
+    paper_bgcolor='white',  # White background for the page
+    font=dict(family='Arial, sans-serif', size=12, color='black')
 )
 
-''
-''
-
-
-first_year = gdp_df[gdp_df['Year'] == from_year]
-last_year = gdp_df[gdp_df['Year'] == to_year]
-
-st.header(f'GDP in {to_year}', divider='gray')
-
-''
-
-cols = st.columns(4)
-
-for i, country in enumerate(selected_countries):
-    col = cols[i % len(cols)]
-
-    with col:
-        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-
-        if math.isnan(first_gdp):
-            growth = 'n/a'
-            delta_color = 'off'
-        else:
-            growth = f'{last_gdp / first_gdp:,.2f}x'
-            delta_color = 'normal'
-
-        st.metric(
-            label=f'{country} GDP',
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
-        )
+# Display the heatmap
+st.plotly_chart(fig)
