@@ -167,6 +167,14 @@ if selected_option == "Dashboard":
 # Report view
 elif selected_option == "View Report":
     st.title("Model Validation Report")
+
+    # Add a short description
+    st.markdown("""
+    This report provides a comprehensive validation of the SWAT-MODFLOW model 
+    implemented for groundwater and surface water interactions. It includes 
+    detailed analysis of the model's performance, statistical metrics, and 
+    visualizations that illustrate the model's predictions against observed data.
+    """)
     
     # Path to the PDF file
     PDF_FILE = Path(__file__).parent / 'data/koki_swatmf_report.pdf'
