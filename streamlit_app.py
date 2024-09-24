@@ -88,7 +88,7 @@ if selected_option == "Dashboard":
     selected_month = st.selectbox("Month", unique_months, index=0)
 
     # Radio buttons for selecting statistic type
-    stat_type = st.radio("Statistic Type", ['Average Rate [m3/day]', 'Standard Deviation'], index=0)
+    stat_type = st.radio("Statistic Type", ['Average Rate [m³/day]', 'Standard Deviation'], index=0)
 
     # Filter data for the selected month
     df_filtered = monthly_stats[monthly_stats['Month'] == selected_month]
@@ -110,13 +110,32 @@ if selected_option == "Dashboard":
         zmin = global_min
         zmax = global_max
 
+    colorbar_title = (
+        "Average Monthly<br> Groundwater / Surface<br> Water Interaction<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - To Stream | + To Aquifer<br> [m³/day]"
+        if stat_type == 'Average Rate [m³/day]' 
+        else '&nbsp;&nbsp;&nbsp;&nbsp;Standard Deviation'
+    )
+    
+    # Calculate the mid point for the color bar (this should be zero)
+    zmid = 0
+    
+    # Create the heatmap figure
     fig = go.Figure(data=go.Heatmap(
         z=grid,
         colorscale='earth_r',
         zmid=zmid,
         zmin=zmin,
         zmax=zmax,
-        colorbar=dict(title=stat_type),
+        colorbar=dict(
+            title=colorbar_title, 
+            orientation='h', 
+            x=0.5, 
+            y=-0.1, 
+            xanchor='center', 
+            yanchor='top',
+            tickvals=[zmin, 0, zmax],  # Specify tick positions
+            ticktext=[f'{zmin:.2f}', '0', f'{zmax:.2f}'],  # Custom tick labels
+        ),
         hovertemplate='%{z:.2f}<extra></extra>',
     ))
 
@@ -128,7 +147,7 @@ if selected_option == "Dashboard":
         yaxis=dict(showticklabels=False, ticks='', autorange='reversed', showgrid=False),
         plot_bgcolor='rgba(240, 240, 240, 0.8)',
         paper_bgcolor='white',
-        font=dict(family='Arial, sans-serif', size=12, color='black')
+        font=dict(family='Arial, sans-serif', size=8, color='black')
     )
 
     # Display the heatmap
