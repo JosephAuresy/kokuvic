@@ -170,18 +170,21 @@ elif selected_option == "View Report":
     with open(PDF_FILE, "rb") as f:
         pdf_data = f.read()
         pdf_base64 = base64.b64encode(pdf_data).decode('utf-8')
-
-    # Display the PDF file using an iframe
-    st.markdown(
-        f'<iframe src="data:application/pdf;base64,{pdf_base64}" width="100%" height="600"></iframe>', 
-        unsafe_allow_html=True
-    )
-
-    # Option to download the PDF file
+    
+    # Option to download the PDF file (display this button above the PDF viewer)
     st.download_button(
         label="Download PDF",
         data=pdf_data,  # Use raw PDF data for downloading
         file_name="koki_swatmf_report.pdf",
         mime="application/pdf",
         key="download_button_report"
+    )
+
+    # Get iframe dimensions
+    iframe_width, iframe_height = get_iframe_dimensions()
+    
+    # Display the PDF file using an iframe
+    st.markdown(
+        f'<iframe src="data:application/pdf;base64,{pdf_base64}" width="{iframe_width}" height="{iframe_height}" style="border:none;"></iframe>', 
+        unsafe_allow_html=True
     )
