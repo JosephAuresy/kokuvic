@@ -12,10 +12,10 @@ st.set_page_config(
 )
 
 # Sidebar for navigation
-st.sidebar.title("Validation results")
+st.sidebar.title("Watershed results")
 selected_option = st.sidebar.radio(
     "Select an option:",
-    ("Water interactions", "Recharge", "View Report")
+    ("Watershed models", "Water interactions", "Recharge", "View Report")
 )
 
 # Decade Selection for each feature
@@ -148,17 +148,28 @@ def custom_title(text, size):
 def get_iframe_dimensions():
     return "100%", "600"
 
-if selected_option == "Water interactions":
-    custom_title("Water Interactions", 28)
+
+
+if selected_option == "Watershed model":
+    custom_title("Watershed models for Xwulqw'selu Sta'lo'", 28)
+    
+    st.markdown("""
+    [Xwulqw’selu Connections](https://onlineacademiccommunity.uvic.ca/xwulqwselu/) research project brings people together to learn about the conditions affecting stream flows in the Xwulqw’selu Watershed, where many are concerned about summer low flows and winter floods.
+    
+    We developed watershed models with the best available data that complement the valuable field data collected by monitors and previous reports. These models give us more understanding from places and times that don't have field data.
+    
+    Watershed models use the **SWAT-MODFLOW** model, an internationally recognized standard for analyzing the interactions between groundwater, surface water, climate, land use, and water use. This model provides valuable insights into the hydrological dynamics of the watershed and is calibrated to the best available data from 2013 to 2022.
+    
+    You can explore interactive maps showing how groundwater and surface water are connected, or view **groundwater recharge** across the watershed. Soon, we’ll add models from other decades in the past to expand our understanding.
+    """)
+    
+elif selected_option == "Water interactions":
+    custom_title("How groundwater and surface water interact in the Xwulqw’selu watershed?", 28)
 
     st.markdown("""
-    **Xwulqw’selu Connections** brings people together to learn about the conditions affecting stream flows in the Xwulqw’selu Watershed. During the summer, the Koksilah River experiences dangerously low water levels, resulting in many streams that feed into it drying up completely.
-
-    To address this issue, the SWAT-MODFLOW model is employed to analyze low flow drivers, specifically the interactions between groundwater and surface water. This model provides valuable insights into the hydrological dynamics of the watershed, with monthly assessments conducted for the period from 2013 to 2022.
-
-    To learn more about the project, please visit [Xwulqw’selu Connections](https://onlineacademiccommunity.uvic.ca/xwulqwselu/).
+    In the Xwulqw’selu Watershed, groundwater plays a key role in sustaining streamflow during low-flow periods, particularly in summer. As surface water levels drop, groundwater discharge becomes the primary source of flow, helping maintain aquatic habitats and water availability. 
     
-    Select the monthly **groundwater / surface water interactions** during the validated period.
+    Land use changes, and climate shifts can reduce groundwater recharge, worsening low-flow conditions. Understanding this groundwater-surface water interaction is critical for managing water resources and mitigating the impacts of prolonged droughts.
     """)
 
     monthly_stats = df.groupby(['Month', 'Row', 'Column'])['Rate'].agg(['mean', 'std']).reset_index()
@@ -230,13 +241,13 @@ if selected_option == "Water interactions":
     st.plotly_chart(fig)
     
 elif selected_option == "Recharge":
-    custom_title("Recharge Data", 28)
+    custom_title("How much groundwater recharge is there in the Xwulqw’selu watershed?", 28)
 
     st.markdown("""
-    In the SWAT-MODFLOW model, recharge refers to the process by which water from precipitation, surface runoff, and other sources infiltrates into the soil and replenishes the groundwater aquifer. 
+    In the SWAT-MODFLOW model, recharge is how groundwater is replenished from  precipitation, surface runoff, and other sources. Understanding recharge is crucial for effective water resource management, as it helps quantify groundwater availability and assess the impacts of land use changes and climate variability on water sustainability in a watershed.
+
+    Below is a map of the average monthly recharge across the watershed. You can change which month you want to look at or zoom into different parts of the watershed...         
     
-    Understanding recharge is crucial for effective water resource management, as it helps quantify groundwater availability and assess the impacts of land use changes and climate variability on water sustainability in a watershed.
-                
     **Select the monthly recharge [mm/day]**
     """)
     
