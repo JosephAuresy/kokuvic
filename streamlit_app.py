@@ -18,6 +18,26 @@ selected_option = st.sidebar.radio(
     ("Water interactions", "View Report", "Recharge")
 )
 
+# Decade Selection for each feature
+st.sidebar.subheader("Model selection")
+st.sidebar.subheader("Climate")
+selected_decade_climate = st.sidebar.selectbox(
+    "Choose a decade for Climate:",
+    ['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s']
+)
+
+st.sidebar.subheader("Land Use")
+selected_decade_land_use = st.sidebar.selectbox(
+    "Choose a decade for Land Use:",
+    ['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s']
+)
+
+st.sidebar.subheader("Water Use")
+selected_decade_water_use = st.sidebar.selectbox(
+    "Choose a decade for Water Use:",
+    ['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s']
+)
+
 # Function to process SWAT-MF data
 @st.cache_data
 def process_swatmf_data(file_path):
