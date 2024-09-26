@@ -157,6 +157,8 @@ if selected_option == "Water interactions":
     To address this issue, the SWAT-MODFLOW model is employed to analyze low flow drivers, specifically the interactions between groundwater and surface water. This model provides valuable insights into the hydrological dynamics of the watershed, with monthly assessments conducted for the period from 2013 to 2022.
 
     To learn more about the project, please visit [Xwulqw’selu Connections](https://onlineacademiccommunity.uvic.ca/xwulqwselu/).
+    
+    Select the monthly interactions between groundwater and surface water during the validated period.
     """)
 
     monthly_stats = df.groupby(['Month', 'Row', 'Column'])['Rate'].agg(['mean', 'std']).reset_index()
