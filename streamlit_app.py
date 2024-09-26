@@ -158,7 +158,7 @@ if selected_option == "Water interactions":
 
     To learn more about the project, please visit [Xwulqw’selu Connections](https://onlineacademiccommunity.uvic.ca/xwulqwselu/).
     
-    Select the monthly interactions between groundwater and surface water during the validated period.
+    Select the monthly **groundwater / surface water interactions** during the validated period.
     """)
 
     monthly_stats = df.groupby(['Month', 'Row', 'Column'])['Rate'].agg(['mean', 'std']).reset_index()
@@ -237,7 +237,7 @@ elif selected_option == "Recharge":
     
     Understanding recharge is crucial for effective water resource management, as it helps quantify groundwater availability and assess the impacts of land use changes and climate variability on water sustainability in a watershed.
                 
-    **Select the monthly recharge**
+    **Select the monthly recharge [mm/day]**
     """)
     
     # Dropdown to select month for recharge data visualization
