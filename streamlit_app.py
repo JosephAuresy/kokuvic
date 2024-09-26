@@ -232,6 +232,14 @@ if selected_option == "Water interactions":
 elif selected_option == "Recharge":
     custom_title("Recharge Data", 28)
 
+    st.markdown("""
+    In the SWAT-MODFLOW model, recharge refers to the process by which water from precipitation, surface runoff, and other sources infiltrates into the soil and replenishes the groundwater aquifer. 
+    
+    Understanding recharge is crucial for effective water resource management, as it helps quantify groundwater availability and assess the impacts of land use changes and climate variability on water sustainability in a watershed.
+                
+    **Select the monthly recharge**
+    """)
+    
     # Dropdown to select month for recharge data visualization
     selected_month = st.selectbox("Select Month for Recharge", list(monthly_recharge_means.keys()))
     recharge_grid = monthly_recharge_means[selected_month]
