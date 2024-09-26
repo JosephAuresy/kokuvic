@@ -152,9 +152,11 @@ if selected_option == "Water interactions":
     custom_title("Groundwater / Surface Water Interactions", 28)
 
     st.markdown("""
-    **Xwulqw’selu Connections** brings people together to learn where streams go dry in the Xwulqw’selu Watershed and how they could begin to flow more. The amount of water flowing in the Koksilah River during summer is dangerously low, leading to streams that feed the river going bone dry. This situation impacts local farmers who struggle to irrigate their crops, while salmon populations face significant survival challenges.
+    **Xwulqw’selu Connections** brings people together to learn about the conditions affecting stream flows in the Xwulqw’selu Watershed. During the summer, the Koksilah River experiences dangerously low water levels, resulting in many streams that feed into it drying up completely.
 
-    The **SWAT-MODFLOW model** is employed to assess the interactions between groundwater and surface water, providing insights into the hydrological dynamics of the watershed and identifying strategies for improving water flow in the river system. For more information about the project, please visit [Xwulqw’selu Connections](https://onlineacademiccommunity.uvic.ca/xwulqwselu/).
+    To address this issue, the SWAT-MODFLOW model is employed to analyze low flow drivers, specifically the interactions between groundwater and surface water. This model provides valuable insights into the hydrological dynamics of the watershed, with monthly assessments conducted for the period from 2013 to 2022.
+
+    To learn more about the project, please visit [Xwulqw’selu Connections](https://onlineacademiccommunity.uvic.ca/xwulqwselu/).
     """)
 
     monthly_stats = df.groupby(['Month', 'Row', 'Column'])['Rate'].agg(['mean', 'std']).reset_index()
