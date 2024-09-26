@@ -12,10 +12,10 @@ st.set_page_config(
 )
 
 # Sidebar for navigation
-st.sidebar.title("Watershed results")
+st.sidebar.title("Xwulqw'selu Sta'lo'")
 selected_option = st.sidebar.radio(
     "Select an option:",
-    ("Watershed model", "Water interactions", "Recharge", "View Report")
+    ("Watershed models", "Water interactions", "Recharge", "View Report")
 )
 
 # # Decade Selection for each feature
@@ -150,7 +150,7 @@ def get_iframe_dimensions():
 
 
 
-if selected_option == "Watershed model":
+if selected_option == "Watershed models":
     custom_title("Watershed models for Xwulqw'selu Sta'lo'", 28)
     
     st.markdown("""
