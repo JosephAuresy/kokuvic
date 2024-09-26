@@ -12,14 +12,14 @@ st.set_page_config(
 )
 
 # Sidebar for navigation
-st.sidebar.title("Navigation")
+st.sidebar.title("Validation results")
 selected_option = st.sidebar.radio(
     "Select an option:",
-    ("Water interactions", "View Report", "Recharge")
+    ("Water interactions", "Recharge", "View Report")
 )
 
 # Decade Selection for each feature
-st.sidebar.subheader("Model selection")
+st.sidebar.title("Model selection")
 st.sidebar.subheader("Climate")
 selected_decade_climate = st.sidebar.selectbox(
     "Choose a decade for Climate:",
