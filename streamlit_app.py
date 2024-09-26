@@ -15,7 +15,7 @@ st.set_page_config(
 st.sidebar.title("Watershed results")
 selected_option = st.sidebar.radio(
     "Select an option:",
-    ("Watershed models", "Water interactions", "Recharge", "View Report")
+    ("Watershed model", "Water interactions", "Recharge", "View Report")
 )
 
 # Decade Selection for each feature
