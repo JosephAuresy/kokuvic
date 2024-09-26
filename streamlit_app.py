@@ -149,7 +149,7 @@ def get_iframe_dimensions():
     return "100%", "600"
 
 if selected_option == "Water interactions":
-    custom_title("Groundwater / Surface Water Interactions", 28)
+    custom_title("Water Interactions", 28)
 
     st.markdown("""
     **Xwulqw’selu Connections** brings people together to learn about the conditions affecting stream flows in the Xwulqw’selu Watershed. During the summer, the Koksilah River experiences dangerously low water levels, resulting in many streams that feed into it drying up completely.
