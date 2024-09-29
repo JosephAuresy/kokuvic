@@ -265,51 +265,67 @@ elif selected_option == "Recharge":
     selected_recharge_month = recharge_months[recharge_month_names.index(selected_recharge_month_name)]
     
     recharge_grid = monthly_recharge_means[selected_recharge_month]
-
-    # Create a custom colorscale where zero values are black
-    custom_colorscale = [
-        [0.0, 'white'],          # Zero mapped to black
-        [0.00001, 'powderblue'], # Very small values as powder blue
-        [0.1, 'lightblue'],     # Low values transition to light blue
-        [0.2, 'skyblue'],        # Mid-range values as sky blue
-        [0.3, 'blue'],          # High values transition to blue
-        [1.0, 'darkblue']        # Maximum values as dark blue
-    ]
-
-    # Create heatmap for the selected recharge month
-    fig = go.Figure(data=go.Heatmap(
-        z=recharge_grid,
-        colorscale=custom_colorscale,  # Using the custom color scale
-        zmin=0,                        # Set minimum value to 0
-        zmax=max(map(max, recharge_grid)),  # Set maximum value from data
-        zmid=0                         # Center the color scale around zero
+    
+    # Create a DataFrame for plotting
+    values = list(monthly_recharge_means.values())
+    df = pd.DataFrame({'Month': recharge_month_names, 'Recharge Value': values})
+    
+    # Define minimum and maximum values
+    min_value = df['Recharge Value'].min()
+    max_value = df['Recharge Value'].max()
+    
+    # Create the main bar chart
+    fig = go.Figure()
+    
+    # Add bars for the monthly recharge values
+    fig.add_trace(go.Bar(x=df['Month'], y=df['Recharge Value'], 
+                         name='Monthly Recharge Values', marker_color='skyblue'))
+    
+    # Add a bar for the min and max values
+    fig.add_trace(go.Bar(
+        x=['Min', 'Max'], 
+        y=[min_value, max_value], 
+        name='Min/Max Values', 
+        marker_color=['black', 'darkblue'],
+        width=0.4,
+        showlegend=False
     ))
-
-
-    # Update the layout of the heatmap
+    
+    # Update layout to position the min/max bar outside the graph
     fig.update_layout(
-        title=f'Monthly Recharge - {selected_recharge_month_name}',
-        xaxis_title=None,    # No title for x-axis
-        yaxis_title=None,    # No title for y-axis
-        xaxis=dict(
-            showticklabels=False,  # Hide x-axis labels
-            ticks='',              # No ticks on x-axis
-            showgrid=False         # Hide grid on x-axis
-        ),
-        yaxis=dict(
-            showticklabels=False,  # Hide y-axis labels
-            ticks='',              # No ticks on y-axis
-            autorange='reversed',  # Reverse y-axis order
-            showgrid=False         # Hide grid on y-axis
-        ),
-        plot_bgcolor='rgba(240, 240, 240, 0.8)',  # Keep plot background light
-        paper_bgcolor='white',                    # Keep the outer paper background white
-        font=dict(family='Arial, sans-serif', size=8, color='black'),  # Font color remains black
+        title='Monthly Recharge Values with Min/Max Bar',
+        barmode='group',
+        yaxis_title='Recharge Values',
+        xaxis_title='Months',
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=True),
+        showlegend=True,
+        height=500,
+        margin=dict(l=20, r=20, t=40, b=120)  # Adjust bottom margin for better visibility
     )
-
-    # Display the recharge heatmap
+    
+    # Adding a secondary axis to position the min/max bar outside the graph
+    fig.add_trace(go.Bar(
+        x=['Min', 'Max'],
+        y=[min_value, max_value],
+        name='Min/Max Values',
+        marker_color=['black', 'darkblue'],
+        width=0.4,
+        showlegend=False,
+        xaxis='x2'  # Use a secondary x-axis
+    ))
+    
+    # Update layout for the secondary axis
+    fig.update_layout(
+        xaxis2=dict(
+            overlaying='x',  # Overlay on the primary x-axis
+            side='bottom',   # Position it at the bottom
+            tickvals=[]      # No ticks for the secondary axis
+        )
+    )
+    
+    # Display the figure in Streamlit
     st.plotly_chart(fig)
-
 elif selected_option == "View Report":
     st.title("Model Validation Report")
 
