@@ -257,9 +257,12 @@ elif selected_option == "Recharge":
     
     **Select the monthly recharge [mm/day]**
     """)
+
     
-    # Dropdown to select month for recharge data visualization
-    selected_month = st.selectbox("Select Month for Recharge", list(monthly_recharge_means.keys()))
+    recharge_months = list(monthly_recharge_means.keys())
+    recharge_month_names = [month_names[m - 1] for m in recharge_months]
+
+    selected_recharge_month_name = st.selectbox("Select Month", recharge_month_names)
     selected_recharge_month = recharge_months[recharge_month_names.index(selected_recharge_month_name)]
     
     recharge_grid = monthly_recharge_means[selected_recharge_month]
