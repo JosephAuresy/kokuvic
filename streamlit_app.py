@@ -307,10 +307,6 @@ elif selected_option == "Recharge":
         width=800,
         height=600,
     )
-    # Create and display Folium map
-    recharge_data = df[df['Month'] == selected_recharge_month]  # Assuming you filter recharge data by month
-    folium_map = create_map(recharge_data, selected_recharge_month)
-    st_folium(folium_map, width=700, height=500)
     
     st.plotly_chart(fig_recharge, use_container_width=True)
     
