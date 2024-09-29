@@ -257,15 +257,13 @@ elif selected_option == "Recharge":
     
     **Select the monthly recharge [mm/day]**
     """)
-    recharge_months = sorted(monthly_recharge_means.keys())
+    recharge_months = list(monthly_recharge_means.keys())
     recharge_month_names = [month_names[m - 1] for m in recharge_months]
 
-    selected_recharge_month_name = st.selectbox("Month", recharge_month_names, index=0)
+    selected_recharge_month_name = st.selectbox("Select Month", recharge_month_names)
     selected_recharge_month = recharge_months[recharge_month_names.index(selected_recharge_month_name)]
-
-    # Extract and reshape the recharge grid
+    
     recharge_grid = monthly_recharge_means[selected_recharge_month]
-    recharge_grid = np.where(recharge_grid > 0, recharge_grid, np.nan)  # Hide zero values for better visualization
 
     # Create heatmap for recharge
     fig_recharge = go.Figure(data=go.Heatmap(
@@ -281,14 +279,16 @@ elif selected_option == "Recharge":
         )
     ))
 
-    fig.update_layout(
-        title=f'Monthly Average Recharge for {selected_recharge_month_name}',
+    fig_recharge.update_layout(
+        title=f'Monthly Recharge - {selected_recharge_month_name}',
         xaxis_title='Column',
+        yaxis_title='Row',
         yaxis=dict(autorange='reversed'),  # Reverse y-axis
         width=800,
         height=600,
     )
-    st.plotly_chart(fig)
+
+    st.plotly_chart(fig_recharge, use_container_width=True)
     
 elif selected_option == "View Report":
     st.title("Model Validation Report")
