@@ -265,67 +265,32 @@ elif selected_option == "Recharge":
     selected_recharge_month = recharge_months[recharge_month_names.index(selected_recharge_month_name)]
     
     recharge_grid = monthly_recharge_means[selected_recharge_month]
-    
-    # Create a DataFrame for plotting
-    values = list(monthly_recharge_means.values())
-    df = pd.DataFrame({'Month': recharge_month_names, 'Recharge Value': values})
-    
-    # Define minimum and maximum values
-    min_value = df['Recharge Value'].min()
-    max_value = df['Recharge Value'].max()
-    
-    # Create the main bar chart
-    fig = go.Figure()
-    
-    # Add bars for the monthly recharge values
-    fig.add_trace(go.Bar(x=df['Month'], y=df['Recharge Value'], 
-                         name='Monthly Recharge Values', marker_color='skyblue'))
-    
-    # Add a bar for the min and max values
-    fig.add_trace(go.Bar(
-        x=['Min', 'Max'], 
-        y=[min_value, max_value], 
-        name='Min/Max Values', 
-        marker_color=['black', 'darkblue'],
-        width=0.4,
-        showlegend=False
-    ))
-    
-    # Update layout to position the min/max bar outside the graph
-    fig.update_layout(
-        title='Monthly Recharge Values with Min/Max Bar',
-        barmode='group',
-        yaxis_title='Recharge Values',
-        xaxis_title='Months',
-        xaxis=dict(showgrid=False),
-        yaxis=dict(showgrid=True),
-        showlegend=True,
-        height=500,
-        margin=dict(l=20, r=20, t=40, b=120)  # Adjust bottom margin for better visibility
-    )
-    
-    # Adding a secondary axis to position the min/max bar outside the graph
-    fig.add_trace(go.Bar(
-        x=['Min', 'Max'],
-        y=[min_value, max_value],
-        name='Min/Max Values',
-        marker_color=['black', 'darkblue'],
-        width=0.4,
-        showlegend=False,
-        xaxis='x2'  # Use a secondary x-axis
-    ))
-    
-    # Update layout for the secondary axis
-    fig.update_layout(
-        xaxis2=dict(
-            overlaying='x',  # Overlay on the primary x-axis
-            side='bottom',   # Position it at the bottom
-            tickvals=[]      # No ticks for the secondary axis
+
+    # Create heatmap for recharge
+    fig_recharge = go.Figure(data=go.Heatmap(
+        z=recharge_grid,
+        colorscale='viridis',
+        colorbar=dict(
+            title='Recharge [mm/month]',
+            orientation='h',
+            x=0.5,
+            y=-0.1,
+            xanchor='center',
+            yanchor='top',
         )
+    ))
+
+    fig_recharge.update_layout(
+        title=f'Monthly Recharge - {selected_recharge_month_name}',
+        xaxis_title='Column',
+        yaxis_title='Row',
+        yaxis=dict(autorange='reversed'),  # Reverse y-axis
+        width=800,
+        height=600,
     )
+
+    st.plotly_chart(fig_recharge, use_container_width=True)
     
-    # Display the figure in Streamlit
-    st.plotly_chart(fig)
 elif selected_option == "View Report":
     st.title("Model Validation Report")
 
