@@ -18,6 +18,11 @@ selected_option = st.sidebar.radio(
     ("Watershed models", "Water interactions", "Recharge", "View Report")
 )
 
+# Month names for mapping
+month_names = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+]
 # # Decade Selection for each feature
 # st.sidebar.title("Model selection")
 # st.sidebar.subheader("Climate")
@@ -148,8 +153,6 @@ def custom_title(text, size):
 def get_iframe_dimensions():
     return "100%", "600"
 
-
-
 if selected_option == "Watershed models":
     custom_title("Watershed models for Xwulqw'selu Sta'lo'", 28)
     
@@ -181,8 +184,10 @@ elif selected_option == "Water interactions":
     global_max = monthly_stats[['Average Rate', 'Standard Deviation']].max().max()
 
     unique_months = sorted(monthly_stats['Month'].unique())
+    unique_month_names = [month_names[m - 1] for m in unique_months]
 
-    selected_month = st.selectbox("Month", unique_months, index=0)
+    selected_month_name = st.selectbox("Month", unique_month_names, index=0)
+    selected_month = unique_months[unique_month_names.index(selected_month_name)]
     stat_type = st.radio("Statistic Type", ['Average Rate [m³/day]', 'Standard Deviation'], index=0)
 
     df_filtered = monthly_stats[monthly_stats['Month'] == selected_month]
@@ -255,7 +260,9 @@ elif selected_option == "Recharge":
     
     # Dropdown to select month for recharge data visualization
     selected_month = st.selectbox("Select Month for Recharge", list(monthly_recharge_means.keys()))
-    recharge_grid = monthly_recharge_means[selected_month]
+    selected_recharge_month = recharge_months[recharge_month_names.index(selected_recharge_month_name)]
+    
+    recharge_grid = monthly_recharge_means[selected_recharge_month]
 
     # Create a custom colorscale where zero values are black
     custom_colorscale = [
