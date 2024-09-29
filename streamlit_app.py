@@ -255,7 +255,6 @@ elif selected_option == "Recharge":
 
     Below is a map of the average monthly recharge across the watershed. You can change which month you want to look at or zoom into different parts of the watershed...         
     
-    **Select the monthly recharge [mm/day]**
     """)
     recharge_months = list(monthly_recharge_means.keys())
     recharge_month_names = [month_names[m - 1] for m in recharge_months]
