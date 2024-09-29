@@ -272,8 +272,18 @@ elif selected_option == "Recharge":
         z=recharge_grid,
         colorscale='YlGnBu',
         zmin=0,  # Assuming recharge cannot be negative
-        colorbar=dict(title="Recharge [m³/day]"),
-        hovertemplate='%{z:.2f}<extra></extra>',
+        zmax=zmax,  # Add this if you want to set a max value dynamically
+        colorbar=dict(
+            title=colorbar_title, 
+            orientation='h', 
+            x=0.5, 
+            y=-0.1, 
+            xanchor='center', 
+            yanchor='top',
+            tickvals=[zmin, 0, zmax],  # Specify tick positions
+            ticktext=[f'{zmin:.2f}', '0', f'{zmax:.2f}'],  # Custom tick labels
+        ),
+        hovertemplate='%{z:.2f}<extra></extra>',  # Move hovertemplate here
     ))
 
     fig.update_layout(
