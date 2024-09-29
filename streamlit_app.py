@@ -257,7 +257,6 @@ elif selected_option == "Recharge":
     
     **Select the monthly recharge [mm/day]**
     """)
-
     
     recharge_months = list(monthly_recharge_means.keys())
     recharge_month_names = [month_names[m - 1] for m in recharge_months]
@@ -284,9 +283,10 @@ elif selected_option == "Recharge":
         zmid=0                         # Center the color scale around zero
     ))
 
+
     # Update the layout of the heatmap
     fig.update_layout(
-        title=f'Recharge Data for Month {selected_month}',  # Title of the heatmap
+        title=f'Monthly Recharge - {selected_recharge_month_name}',
         xaxis_title=None,    # No title for x-axis
         yaxis_title=None,    # No title for y-axis
         xaxis=dict(
