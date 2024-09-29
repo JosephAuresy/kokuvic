@@ -268,10 +268,12 @@ elif selected_option == "Recharge":
 
     # Create a custom colorscale where zero values are black
     custom_colorscale = [
-        [0.0, 'white'],       # Zero mapped to black
-        [0.00001, 'powderblue'],  # Small values start as light powder blue
-        [0.5, 'lightskyblue'],    # Mid-range values are light sky blue
-        [1.0, 'blue']         # Maximum values are dark blue
+        [0.0, 'white'],          # Zero mapped to black
+        [0.00001, 'powderblue'], # Very small values as powder blue
+        [0.25, 'lightblue'],     # Low values transition to light blue
+        [0.5, 'skyblue'],        # Mid-range values as sky blue
+        [0.75, 'blue'],          # High values transition to blue
+        [1.0, 'darkblue']        # Maximum values as dark blue
     ]
 
     # Create heatmap for the selected recharge month
