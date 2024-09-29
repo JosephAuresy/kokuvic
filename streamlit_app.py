@@ -4,6 +4,8 @@ import numpy as np
 import plotly.graph_objects as go
 from pathlib import Path
 import base64
+import folium
+from streamlit_folium import st_folium
 
 # Set the title and favicon that appear in the browser's tab bar.
 st.set_page_config(
@@ -133,6 +135,25 @@ def compute_monthly_mean(data):
         mean_data[month] = np.nanmean(stacked_grids, axis=0)
     return mean_data
 
+def create_map(data, selected_month=None):
+    # Create a Folium map centered around a specific latitude and longitude
+    m = folium.Map(location=[latitude, longitude], zoom_start=8)
+
+    # Create a heat map layer
+    if selected_month:
+        # Assuming your data has latitude and longitude for each point
+        for index, row in data.iterrows():
+            folium.CircleMarker(
+                location=(row['Latitude'], row['Longitude']),
+                radius=5,
+                color='blue',
+                fill=True,
+                fill_opacity=0.6,
+                popup=f"Rate: {row['Rate']}"
+            ).add_to(m)
+
+    return m
+    
 # Path to your data file
 DATA_FILENAME = Path(__file__).parent / 'data/swatmf_out_MF_gwsw_monthly.csv'
 df = process_swatmf_data(DATA_FILENAME)
@@ -286,7 +307,11 @@ elif selected_option == "Recharge":
         width=800,
         height=600,
     )
-
+    # Create and display Folium map
+    recharge_data = df[df['Month'] == selected_recharge_month]  # Assuming you filter recharge data by month
+    folium_map = create_map(recharge_data, selected_recharge_month)
+    st_folium(folium_map, width=700, height=500)
+    
     st.plotly_chart(fig_recharge, use_container_width=True)
     
 elif selected_option == "View Report":
