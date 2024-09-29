@@ -279,7 +279,7 @@ elif selected_option == "Recharge":
     fig.update_layout(
         title=f'Monthly Average Recharge for {selected_recharge_month_name}',
         xaxis_title='Column',
-        yaxis_title='Row',
+        yaxis=dict(autorange='reversed'),  # Reverse y-axis
         width=800,
         height=600,
     )
