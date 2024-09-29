@@ -270,9 +270,9 @@ elif selected_option == "Recharge":
     custom_colorscale = [
         [0.0, 'white'],          # Zero mapped to black
         [0.00001, 'powderblue'], # Very small values as powder blue
-        [0.5, 'lightblue'],     # Low values transition to light blue
-        [0.1, 'skyblue'],        # Mid-range values as sky blue
-        [0.2, 'blue'],          # High values transition to blue
+        [0.1, 'lightblue'],     # Low values transition to light blue
+        [0.2, 'skyblue'],        # Mid-range values as sky blue
+        [0.3, 'blue'],          # High values transition to blue
         [1.0, 'darkblue']        # Maximum values as dark blue
     ]
 
