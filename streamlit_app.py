@@ -267,17 +267,17 @@ elif selected_option == "Recharge":
     recharge_grid = monthly_recharge_means[selected_recharge_month]
     recharge_grid = np.where(recharge_grid > 0, recharge_grid, np.nan)  # Hide zero values for better visualization
 
-    # Create the heatmap for recharge values
+    # Create heatmap for recharge
     fig_recharge = go.Figure(data=go.Heatmap(
         z=recharge_grid,
         colorscale='viridis',
         colorbar=dict(
             title='Recharge [mm/month]',
-            orientation='h',  # Horizontal orientation
-            x=0.5,  # Centered on the x-axis
-            y=-0.1,  # Position below the heatmap
-            xanchor='center',  # Anchor x position at the center
-            yanchor='top',  # Anchor y position at the top
+            orientation='h',
+            x=0.5,
+            y=-0.1,
+            xanchor='center',
+            yanchor='top',
         )
     ))
 
