@@ -186,7 +186,41 @@ if selected_option == "Watershed models":
     
     You can explore interactive maps showing how groundwater and surface water are connected, or view **groundwater recharge** across the watershed. Soon, we’ll add models from other decades in the past to expand our understanding.
     """)
-    
+
+    # Define the EPSG code for the shapefile
+    epsg = 32610  # Change this to the correct EPSG code if necessary
+
+    # Set the path to your shapefile
+    main_path = Path(__file__).parent
+    shapefile_path = main_path / 'data/subs1.shp'
+
+    # Load your GeoDataFrame from the shapefile
+    try:
+        all_gdf = gpd.read_file(shapefile_path)
+    except Exception as e:
+        st.error(f"Error loading shapefile: {e}")
+        st.stop()  # Stop execution if there's an error
+
+    # Ensure the GeoDataFrame is in the correct CRS
+    all_gdf = all_gdf.to_crs(epsg=epsg)
+
+    # Define initial location (latitude and longitude for Duncan, BC)
+    initial_location = [48.67, -123.79]  # Duncan, BC
+
+    # Initialize the map centered on Duncan
+    m = folium.Map(location=initial_location, zoom_start=11, control_scale=True)
+
+    # Add the GeoDataFrame directly to the map
+    folium.GeoJson(all_gdf).add_to(m)
+
+    # Add MousePosition to display coordinates
+    folium.plugins.MousePosition().add_to(m)
+
+    # Render the Folium map in Streamlit
+    st.title("Watershed map, with 197 subbasins")
+    st_folium(m, width=700, height=600)  # Adjust width and height as needed
+
+
 elif selected_option == "Water interactions":
     custom_title("How groundwater and surface water interact in the Xwulqw’selu watershed?", 28)
 
