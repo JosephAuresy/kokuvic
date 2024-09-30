@@ -11,4 +11,3 @@ streamlit-option-menu
 hsclient
 geojson
 geopandas
-os
