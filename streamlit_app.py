@@ -6,7 +6,6 @@ from pathlib import Path
 import base64
 import folium
 from streamlit_folium import st_folium
-import os
 import geopandas as gpd
 from folium import plugins
 from folium import GeoJson  
