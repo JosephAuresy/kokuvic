@@ -190,22 +190,37 @@ if selected_option == "Watershed models":
     You can explore interactive maps showing how groundwater and surface water are connected, or view **groundwater recharge** across the watershed. Soon, we’ll add models from other decades in the past to expand our understanding.
     """)
 
-    # Define the EPSG code for the shapefile
-    epsg = 32610  # Change this to the correct EPSG code if necessary
+    # Define the EPSG code for the shapefiles
+    epsg = 32610  # Adjust this if necessary
 
-    # Set the path to your shapefile
+    # Set the paths to your shapefiles
     main_path = Path(__file__).parent
-    shapefile_path = main_path / 'data/subs1.shp'
+    subbasins_shapefile_path = main_path / 'data/subs1.shp'
+    grid_shapefile_path = main_path / 'data/koki_mod_grid.shp'
 
-    # Load your GeoDataFrame from the shapefile
+    # Load the subbasins GeoDataFrame from the shapefile
     try:
-        all_gdf = gpd.read_file(shapefile_path)
+        subbasins_gdf = gpd.read_file(subbasins_shapefile_path)
     except Exception as e:
-        st.error(f"Error loading shapefile: {e}")
+        st.error(f"Error loading subbasins shapefile: {e}")
         st.stop()  # Stop execution if there's an error
 
     # Ensure the GeoDataFrame is in the correct CRS
-    all_gdf = all_gdf.to_crs(epsg=epsg)
+    subbasins_gdf = subbasins_gdf.to_crs(epsg=epsg)
+
+    # Load the grid GeoDataFrame from the shapefile
+    try:
+        grid_gdf = gpd.read_file(grid_shapefile_path)
+    except Exception as e:
+        st.error(f"Error loading grid shapefile: {e}")
+        st.stop()  # Stop execution if there's an error
+
+    # Check if the CRS is set for the grid shapefile, and set it manually if needed
+    if grid_gdf.crs is None:
+        grid_gdf.set_crs(epsg=32610, inplace=True)
+
+    # Ensure the grid GeoDataFrame is in the correct CRS
+    grid_gdf = grid_gdf.to_crs(epsg=epsg)
 
     # Define initial location (latitude and longitude for Duncan, BC)
     initial_location = [48.67, -123.79]  # Duncan, BC
@@ -213,14 +228,20 @@ if selected_option == "Watershed models":
     # Initialize the map centered on Duncan
     m = folium.Map(location=initial_location, zoom_start=11, control_scale=True)
 
-    # Add the GeoDataFrame directly to the map
-    folium.GeoJson(all_gdf).add_to(m)
+    # Add the subbasins layer to the map
+    subbasins_layer = folium.GeoJson(subbasins_gdf, name="Subbasins", style_function=lambda x: {'color': 'green', 'weight': 2}).add_to(m)
+
+    # Add the grid layer to the map
+    grid_layer = folium.GeoJson(grid_gdf, name="Grid", style_function=lambda x: {'color': 'blue', 'weight': 1}).add_to(m)
 
     # Add MousePosition to display coordinates
-    folium.plugins.MousePosition().add_to(m)
+    MousePosition().add_to(m)
+
+    # Add a layer control to switch between the subbasins and grid layers
+    folium.LayerControl().add_to(m)
 
     # Render the Folium map in Streamlit
-    st.title("Watershed map, with 197 subbasins")
+    st.title("Watershed Map")
     st_folium(m, width=700, height=600)  # Adjust width and height as needed
 
 
