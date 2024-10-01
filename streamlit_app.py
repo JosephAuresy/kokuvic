@@ -9,6 +9,8 @@ from streamlit_folium import st_folium
 import geopandas as gpd
 from folium import plugins
 from folium import GeoJson  
+from folium.plugins import MousePosition
+
 
 # Set the title and favicon that appear in the browser's tab bar.
 st.set_page_config(
