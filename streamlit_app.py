@@ -332,6 +332,7 @@ elif selected_option == "Water interactions":
         [row.geometry.y, row.geometry.x, row['Water Interaction Value']]
         for _, row in gdf_water_interactions.iterrows()
     ]
+    print(heatmap_data)  # Add this line to debug the contents of heatmap_data
     
     # Add the heatmap layer to the map
     heatmap = plugins.HeatMap(
