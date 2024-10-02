@@ -11,6 +11,7 @@ from folium import plugins
 from folium import GeoJson  
 from folium.plugins import MousePosition
 from shapely.geometry import Point
+from pyproj import Transformer
 
 # Set the title and favicon that appear in the browser's tab bar.
 st.set_page_config(
