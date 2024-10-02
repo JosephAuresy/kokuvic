@@ -11,7 +11,6 @@ from folium import plugins
 from folium import GeoJson  
 from folium.plugins import MousePosition
 from shapely.geometry import Point
-from pyproj import Transformer
 
 # Set the title and favicon that appear in the browser's tab bar.
 st.set_page_config(
@@ -305,20 +304,16 @@ elif selected_option == "Water interactions":
     shapefile_path = "water_interactions.shp"
     gdf_filtered.to_file(shapefile_path)
     
-    # Coordinates for Duncan, BC in WGS 84
-    duncan_lat = 48.67
-    duncan_lon = -123.79
+    # Define the coordinates for Duncan, BC (already in EPSG:32610)
+    duncan_lat = 48.67  # Latitude
+    duncan_lon = -123.79  # Longitude
     
-    # Convert WGS 84 (longitude, latitude) to EPSG:32610
-    wgs84_proj = Proj('epsg:4326')  # WGS 84
-    epsg32610_proj = Proj('epsg:32610')  # EPSG:32610
+    # Create a Folium map centered on Duncan
+    m = folium.Map(location=[duncan_lat, duncan_lon], zoom_start=11, control_scale=True)
     
-    # Transform the coordinates to the projected CRS
-    x_duncan, y_duncan = transform(wgs84_proj, epsg32610_proj, duncan_lon, duncan_lat)
-    
-    # Create a Folium map centered on Duncan in EPSG:32610
-    m = folium.Map(location=[y_duncan, x_duncan], zoom_start=11, control_scale=True)
-    
+    # Add a marker for Duncan
+    folium.Marker([duncan_lat, duncan_lon], popup='Duncan, BC').add_to(m)
+
     # Add the grid as a GeoJSON layer to the map
     folium.GeoJson(
         grid_gdf,
