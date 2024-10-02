@@ -259,9 +259,28 @@ if selected_option == "Watershed models":
 
     # Set the data folder using Path
     data_folder = Path(__file__).parent / 'data'
+
+    # Define the image file name and the corresponding message
+    image_file = 'Slide4.jpg'
+    message = "Simplified explanation of the models"
+    
+    # User instructions
+    st.title("Interactive Image Viewer")
+    st.write("Click the button below to see an explanation about the model.")
+    
+    # Load and display the image using Path
+    image_path = data_folder / image_file  # Use Path to construct the full path
+    image = Image.open(image_path)
+    
+    # Show the image
+    st.image(image, caption=image_file, use_column_width=True)
+    
+    # Button to show the message
+    if st.button("Show explanation"):
+        st.write(message)
     
     # List of image file names
-    image_files = ['Slide4.jpg', 'Slide1.jpg', 'Slide2.jpg', 'Slide3.jpg']
+    image_files = ['Slide1.jpg', 'Slide2.jpg', 'Slide3.jpg']
     
     # Load and display the images using Path
     for image_file in image_files:
