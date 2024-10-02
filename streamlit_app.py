@@ -304,7 +304,7 @@ elif selected_option == "Water interactions":
     shapefile_path = "water_interactions.shp"
     gdf_filtered.to_file(shapefile_path)
     
-    # Define the coordinates for Duncan, BC (already in EPSG:32610)
+    # Define the coordinates for Duncan, BC
     duncan_lat = 48.67  # Latitude
     duncan_lon = -123.79  # Longitude
     
@@ -313,7 +313,7 @@ elif selected_option == "Water interactions":
     
     # Add a marker for Duncan
     folium.Marker([duncan_lat, duncan_lon], popup='Duncan, BC').add_to(m)
-
+    
     # Add the grid as a GeoJSON layer to the map
     folium.GeoJson(
         grid_gdf,
@@ -321,12 +321,13 @@ elif selected_option == "Water interactions":
         style_function=lambda x: {'color': 'blue', 'weight': 1},
     ).add_to(m)
     
-    # Add water interactions as a heatmap layer
+    # Prepare heatmap data using the geometry from the filtered GeoDataFrame
     heatmap_data = [
-        [row['Row'], row['Column'], row['Average Rate']] 
-        for _, row in df_filtered.iterrows()
+        [row.geometry.y, row.geometry.x, row['Average Rate']]
+        for _, row in gdf_filtered.iterrows()
     ]
     
+    # Add the heatmap layer to the map
     heatmap = plugins.HeatMap(
         heatmap_data,
         radius=15,  # Adjust radius for heatmap intensity
@@ -334,8 +335,6 @@ elif selected_option == "Water interactions":
         overlay=True,
         control=True,
     )
-    
-    # Add the heatmap layer to the map
     m.add_child(heatmap)
     
     # Add Layer Control
