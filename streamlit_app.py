@@ -281,12 +281,7 @@ elif selected_option == "Water interactions":
     stat_type = st.radio("Statistic Type", ['Average Rate [m³/day]', 'Standard Deviation'], index=0)
 
     df_filtered = monthly_stats[monthly_stats['Month'] == selected_month]
-    
-    # Get grid extents from grid_gdf
-    minx, miny, maxx, maxy = grid_gdf.total_bounds
-    num_rows = grid_gdf.shape[0]  # Number of rows in the grid
-    num_columns = grid_gdf.shape[1]  # Number of columns in the grid
-    
+   
     # Calculate the coordinates of each cell's center
     cell_size = 300  # Size of each grid cell in meters
     geometry = []
@@ -296,8 +291,8 @@ elif selected_option == "Water interactions":
         column_index = int(row['Column']) - 1  # Adjust for zero-based indexing
     
         # Calculate the x and y coordinates of the cell's center
-        x_coord = minx + (column_index + 0.5) * cell_size
-        y_coord = miny + (row_index + 0.5) * cell_size
+        x_coord = grid_gdf.total_bounds[0] + (column_index + 0.5) * cell_size
+        y_coord = grid_gdf.total_bounds[1] + (row_index + 0.5) * cell_size
     
         # Create a Point geometry
         geometry.append(Point(x_coord, y_coord))
@@ -308,14 +303,21 @@ elif selected_option == "Water interactions":
     # Save the GeoDataFrame as a shapefile
     shapefile_path = "water_interactions.shp"
     gdf_filtered.to_file(shapefile_path)
-
-    # Center the Folium map on the grid layer
-    center_lat = (miny + maxy) / 2
-    center_lon = (minx + maxx) / 2
     
-    # Create a Folium map
-    m = folium.Map(location=[center_lat, center_lon], zoom_start=11, control_scale=True)
-
+    # Coordinates for Duncan, BC in WGS 84
+    duncan_lat = 48.67
+    duncan_lon = -123.79
+    
+    # Convert WGS 84 (longitude, latitude) to EPSG:32610
+    wgs84_proj = Proj('epsg:4326')  # WGS 84
+    epsg32610_proj = Proj('epsg:32610')  # EPSG:32610
+    
+    # Transform the coordinates to the projected CRS
+    x_duncan, y_duncan = transform(wgs84_proj, epsg32610_proj, duncan_lon, duncan_lat)
+    
+    # Create a Folium map centered on Duncan in EPSG:32610
+    m = folium.Map(location=[y_duncan, x_duncan], zoom_start=11, control_scale=True)
+    
     # Add the grid as a GeoJSON layer to the map
     folium.GeoJson(
         grid_gdf,
