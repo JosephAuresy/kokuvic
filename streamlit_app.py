@@ -13,6 +13,7 @@ from folium.plugins import MousePosition
 from shapely.geometry import Point
 from PIL import Image
 
+
 # Set the title and favicon that appear in the browser's tab bar.
 st.set_page_config(
     page_title='Koki Dashboard',
