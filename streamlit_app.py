@@ -261,7 +261,7 @@ if selected_option == "Watershed models":
     data_folder = Path(__file__).parent / 'data'
     
     # List of image file names
-    image_files = ['Slide1.jpg', 'Slide2.jpg', 'Slide3.jpg']
+    image_files = ['Slide1.jpg', 'Slide2.jpg', 'Slide3.jpg', 'Slide4.jpg']
     
     # Load and display the images using Path
     for image_file in image_files:
