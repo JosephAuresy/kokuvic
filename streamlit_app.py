@@ -255,46 +255,33 @@ if selected_option == "Watershed models":
     # Render the Folium map in Streamlit
     st.title("Watershed Map")
     st_folium(m, width=700, height=600)  
-
+    
     # Set the data folder using Path
     data_folder = Path(__file__).parent / 'data'
     
-    # Define the image file name for Slide4
+    # Define the image file name and the corresponding message for Slide4
     slide4_file = 'Slide4.jpg'
+    slide4_message = "Simplified explanation of the models"
     
     # User instructions
     st.title("Interactive Image Viewer")
-    st.write("Hover over the image to see the explanation.")
+    st.write("Click the button below to see a simplified explanation of the model.")
     
-    # Load Slide4 image using Path
+    # Load and display Slide4 image using Path
     slide4_path = data_folder / slide4_file  # Use Path to construct the full path
     slide4_image = Image.open(slide4_path)
     
-    # Create a draw object
-    draw = ImageDraw.Draw(slide4_image)
-    
-    # Define the message and font size
-    message = "Simplified explanation of the models"
-    font_size = 30  # Adjust font size as needed
-    font_path = "arial.ttf"  # Change this if you have a specific font file
-    font = ImageFont.truetype(font_path, font_size)
-    
-    # Get dimensions for positioning the text
-    image_width, image_height = slide4_image.size
-    text_width, text_height = draw.textsize(message, font=font)
-    
-    # Position the text at the bottom center of the image
-    text_x = (image_width - text_width) / 2
-    text_y = image_height - text_height - 10  # 10 pixels from the bottom
-    
-    # Draw the text on the image
-    draw.text((text_x, text_y), message, font=font, fill="white")
-    
-    # Show Slide4 image with overlayed message
+    # Show Slide4 image
     st.image(slide4_image, caption=slide4_file, use_column_width=True)
     
-    # Other images
+    # Button to show the message for Slide4
+    if st.button("Show explanation for Slide 4"):
+        st.write(slide4_message)
+    
+    # List of other image file names
     image_files = ['Slide1.jpg', 'Slide2.jpg', 'Slide3.jpg']
+    
+    # Load and display the other images using Path
     st.write("Other images:")
     for other_image_file in image_files:
         other_image_path = data_folder / other_image_file  # Use Path to construct the full path
