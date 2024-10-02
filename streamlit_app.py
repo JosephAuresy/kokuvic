@@ -259,35 +259,35 @@ if selected_option == "Watershed models":
 
     # Set the data folder using Path
     data_folder = Path(__file__).parent / 'data'
-
-    # Define the image file name and the corresponding message
-    image_file = 'Slide4.jpg'
-    message = "Simplified explanation of the models"
+    
+    # Define the image file name and the corresponding message for Slide4
+    slide4_file = 'Slide4.jpg'
+    slide4_message = "Simplified explanation of the models"
     
     # User instructions
     st.title("Interactive Image Viewer")
-    st.write("Click the button below to see an explanation about the model.")
+    st.write("Click the button below to see a simplified explanation of the model.")
     
-    # Load and display the image using Path
-    image_path = data_folder / image_file  # Use Path to construct the full path
-    image = Image.open(image_path)
+    # Load and display Slide4 image using Path
+    slide4_path = data_folder / slide4_file  # Use Path to construct the full path
+    slide4_image = Image.open(slide4_path)
     
-    # Show the image
-    st.image(image, caption=image_file, use_column_width=True)
+    # Show Slide4 image
+    st.image(slide4_image, caption=slide4_file, use_column_width=True)
     
-    # Button to show the message
-    if st.button("Show explanation"):
-        st.write(message)
+    # Button to show the message for Slide4
+    if st.button("Show explanation for Slide 4"):
+        st.write(slide4_message)
     
-    # List of image file names
+    # List of other image file names
     image_files = ['Slide1.jpg', 'Slide2.jpg', 'Slide3.jpg']
     
-    # Load and display the images using Path
-    for image_file in image_files:
-        image_path = data_folder / image_file  # Use Path to construct the full path
-        image = Image.open(image_path)
-        st.image(image, caption=image_file, use_column_width=True)
-
+    # Load and display the other images using Path
+    st.write("Other images:")
+    for other_image_file in image_files:
+        other_image_path = data_folder / other_image_file  # Use Path to construct the full path
+        other_image = Image.open(other_image_path)
+        st.image(other_image, caption=other_image_file, use_column_width=True)
 
 elif selected_option == "Water interactions":
     custom_title("How groundwater and surface water interact in the Xwulqw’selu watershed?", 28)
