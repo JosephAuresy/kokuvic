@@ -10,7 +10,7 @@ import geopandas as gpd
 from folium import plugins
 from folium import GeoJson  
 from folium.plugins import MousePosition
-
+from shapely.geometry import Point
 
 # Set the title and favicon that appear in the browser's tab bar.
 st.set_page_config(
@@ -179,6 +179,42 @@ def custom_title(text, size):
 def get_iframe_dimensions():
     return "100%", "600"
 
+# Define the EPSG code for the shapefiles
+epsg = 32610  # Adjust this if necessary
+
+# Set the paths to your shapefiles
+main_path = Path(__file__).parent
+subbasins_shapefile_path = main_path / 'data/subs1.shp'
+grid_shapefile_path = main_path / 'data/koki_mod_grid.shp'
+
+# Load the subbasins GeoDataFrame from the shapefile
+try:
+    subbasins_gdf = gpd.read_file(subbasins_shapefile_path)
+except Exception as e:
+    st.error(f"Error loading subbasins shapefile: {e}")
+    st.stop()  # Stop execution if there's an error
+
+# Ensure the GeoDataFrame is in the correct CRS
+subbasins_gdf = subbasins_gdf.to_crs(epsg=epsg)
+
+# Load the grid GeoDataFrame from the shapefile
+try:
+    grid_gdf = gpd.read_file(grid_shapefile_path)
+except Exception as e:
+    st.error(f"Error loading grid shapefile: {e}")
+    st.stop()  # Stop execution if there's an error
+
+# Check if the CRS is set for the grid shapefile, and set it manually if needed
+if grid_gdf.crs is None:
+    grid_gdf.set_crs(epsg=32610, inplace=True)
+
+# Ensure the grid GeoDataFrame is in the correct CRS
+grid_gdf = grid_gdf.to_crs(epsg=epsg)
+
+# Define initial location (latitude and longitude for Duncan, BC)
+initial_location = [48.67, -123.79]  # Duncan, BC
+
+
 if selected_option == "Watershed models":
     custom_title("Watershed models for Xwulqw'selu Sta'lo'", 28)
     
@@ -191,41 +227,6 @@ if selected_option == "Watershed models":
     
     You can explore interactive maps showing how groundwater and surface water are connected, or view **groundwater recharge** across the watershed. Soon, we’ll add models from other decades in the past to expand our understanding.
     """)
-
-    # Define the EPSG code for the shapefiles
-    epsg = 32610  # Adjust this if necessary
-
-    # Set the paths to your shapefiles
-    main_path = Path(__file__).parent
-    subbasins_shapefile_path = main_path / 'data/subs1.shp'
-    grid_shapefile_path = main_path / 'data/koki_mod_grid.shp'
-
-    # Load the subbasins GeoDataFrame from the shapefile
-    try:
-        subbasins_gdf = gpd.read_file(subbasins_shapefile_path)
-    except Exception as e:
-        st.error(f"Error loading subbasins shapefile: {e}")
-        st.stop()  # Stop execution if there's an error
-
-    # Ensure the GeoDataFrame is in the correct CRS
-    subbasins_gdf = subbasins_gdf.to_crs(epsg=epsg)
-
-    # Load the grid GeoDataFrame from the shapefile
-    try:
-        grid_gdf = gpd.read_file(grid_shapefile_path)
-    except Exception as e:
-        st.error(f"Error loading grid shapefile: {e}")
-        st.stop()  # Stop execution if there's an error
-
-    # Check if the CRS is set for the grid shapefile, and set it manually if needed
-    if grid_gdf.crs is None:
-        grid_gdf.set_crs(epsg=32610, inplace=True)
-
-    # Ensure the grid GeoDataFrame is in the correct CRS
-    grid_gdf = grid_gdf.to_crs(epsg=epsg)
-
-    # Define initial location (latitude and longitude for Duncan, BC)
-    initial_location = [48.67, -123.79]  # Duncan, BC
 
     # Initialize the map centered on Duncan
     m = folium.Map(location=initial_location, zoom_start=11, control_scale=True)
@@ -280,61 +281,124 @@ elif selected_option == "Water interactions":
     stat_type = st.radio("Statistic Type", ['Average Rate [m³/day]', 'Standard Deviation'], index=0)
 
     df_filtered = monthly_stats[monthly_stats['Month'] == selected_month]
-    grid = np.full((int(df_filtered['Row'].max()), int(df_filtered['Column'].max())), np.nan)
-
+    
+    # Get grid extents from grid_gdf
+    minx, miny, maxx, maxy = grid_gdf.total_bounds
+    num_rows = grid_gdf.shape[0]  # Number of rows in the grid
+    num_columns = grid_gdf.shape[1]  # Number of columns in the grid
+    
+    # Calculate the coordinates of each cell's center
+    cell_size = 300  # Size of each grid cell in meters
+    geometry = []
+    
     for _, row in df_filtered.iterrows():
-        grid[int(row['Row']) - 1, int(row['Column']) - 1] = row['Average Rate'] if stat_type == 'Average Rate [m³/day]' else row['Standard Deviation']
-
-    # Define color scale and boundaries for heatmap
-    if stat_type == 'Standard Deviation':
-        zmin = 0
-        zmax = global_max
-    else:
-        zmin = global_min
-        zmax = global_max
-
-    colorbar_title = (
-        "Average Monthly<br> Groundwater / Surface<br> Water Interaction<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - To Stream | + To Aquifer<br> [m³/day]"
-        if stat_type == 'Average Rate [m³/day]' 
-        else '&nbsp;&nbsp;&nbsp;&nbsp;Standard Deviation'
+        row_index = int(row['Row']) - 1  # Adjust for zero-based indexing
+        column_index = int(row['Column']) - 1  # Adjust for zero-based indexing
+    
+        # Calculate the x and y coordinates of the cell's center
+        x_coord = minx + (column_index + 0.5) * cell_size
+        y_coord = miny + (row_index + 0.5) * cell_size
+    
+        # Create a Point geometry
+        geometry.append(Point(x_coord, y_coord))
+    
+    # Create GeoDataFrame
+    gdf_filtered = gpd.GeoDataFrame(df_filtered, geometry=geometry, crs="EPSG:32610")
+    
+    # Save the GeoDataFrame as a shapefile
+    shapefile_path = "water_interactions.shp"
+    gdf_filtered.to_file(shapefile_path)
+    
+    # Display heatmap as before
+    # Create a Folium map
+    m = folium.Map(location=[(miny + maxy) / 2, (minx + maxx) / 2], zoom_start=11, control_scale=True)
+    
+    # Add the grid as a GeoJSON layer to the map
+    folium.GeoJson(
+        grid_gdf,
+        name="Grid",
+        style_function=lambda x: {'color': 'blue', 'weight': 1},
+    ).add_to(m)
+    
+    # Add water interactions as a heatmap layer
+    heatmap_data = [
+        [row['Row'], row['Column'], row['Average Rate']] 
+        for _, row in df_filtered.iterrows()
+    ]
+    
+    heatmap = plugins.HeatMap(
+        heatmap_data,
+        radius=15,  # Adjust radius for heatmap intensity
+        name='Water Interactions',
+        overlay=True,
+        control=True,
     )
+    
+    # Add the heatmap layer to the map
+    m.add_child(heatmap)
+    
+    # Add Layer Control
+    folium.LayerControl().add_to(m)
+    
+    # Render the Folium map in Streamlit
+    st.title("Water Interactions Map")
+    st_folium(m, width=700, height=600)
 
-    # Calculate the midpoint for the color bar (usually zero)
-    zmid = 0
+    # grid = np.full((int(df_filtered['Row'].max()), int(df_filtered['Column'].max())), np.nan)
 
-    # Create the heatmap figure
-    fig = go.Figure(data=go.Heatmap(
-        z=grid,
-        colorscale='earth_r',
-        zmid=zmid,
-        zmin=zmin,
-        zmax=zmax,
-        colorbar=dict(
-            title=colorbar_title, 
-            orientation='h', 
-            x=0.5, 
-            y=-0.1, 
-            xanchor='center', 
-            yanchor='top',
-            tickvals=[zmin, 0, zmax],  # Specify tick positions
-            ticktext=[f'{zmin:.2f}', '0', f'{zmax:.2f}'],  # Custom tick labels
-        ),
-        hovertemplate='%{z:.2f}<extra></extra>',
-    ))
+    # for _, row in df_filtered.iterrows():
+    #     grid[int(row['Row']) - 1, int(row['Column']) - 1] = row['Average Rate'] if stat_type == 'Average Rate [m³/day]' else row['Standard Deviation']
 
-    fig.update_layout(
-        title=f'{stat_type} for Month {selected_month}',
-        xaxis_title=None,
-        yaxis_title=None,
-        xaxis=dict(showticklabels=False, ticks='', showgrid=False),
-        yaxis=dict(showticklabels=False, ticks='', autorange='reversed', showgrid=False),
-        plot_bgcolor='rgba(240, 240, 240, 0.8)',
-        paper_bgcolor='white',
-        font=dict(family='Arial, sans-serif', size=8, color='black')
-    )
+    # # Define color scale and boundaries for heatmap
+    # if stat_type == 'Standard Deviation':
+    #     zmin = 0
+    #     zmax = global_max
+    # else:
+    #     zmin = global_min
+    #     zmax = global_max
 
-    # Display the heatmap
-    st.plotly_chart(fig)
+    # colorbar_title = (
+    #     "Average Monthly<br> Groundwater / Surface<br> Water Interaction<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - To Stream | + To Aquifer<br> [m³/day]"
+    #     if stat_type == 'Average Rate [m³/day]' 
+    #     else '&nbsp;&nbsp;&nbsp;&nbsp;Standard Deviation'
+    # )
+
+    # # Calculate the midpoint for the color bar (usually zero)
+    # zmid = 0
+
+    # # Create the heatmap figure
+    # fig = go.Figure(data=go.Heatmap(
+    #     z=grid,
+    #     colorscale='earth_r',
+    #     zmid=zmid,
+    #     zmin=zmin,
+    #     zmax=zmax,
+    #     colorbar=dict(
+    #         title=colorbar_title, 
+    #         orientation='h', 
+    #         x=0.5, 
+    #         y=-0.1, 
+    #         xanchor='center', 
+    #         yanchor='top',
+    #         tickvals=[zmin, 0, zmax],  # Specify tick positions
+    #         ticktext=[f'{zmin:.2f}', '0', f'{zmax:.2f}'],  # Custom tick labels
+    #     ),
+    #     hovertemplate='%{z:.2f}<extra></extra>',
+    # ))
+
+    # fig.update_layout(
+    #     title=f'{stat_type} for Month {selected_month}',
+    #     xaxis_title=None,
+    #     yaxis_title=None,
+    #     xaxis=dict(showticklabels=False, ticks='', showgrid=False),
+    #     yaxis=dict(showticklabels=False, ticks='', autorange='reversed', showgrid=False),
+    #     plot_bgcolor='rgba(240, 240, 240, 0.8)',
+    #     paper_bgcolor='white',
+    #     font=dict(family='Arial, sans-serif', size=8, color='black')
+    # )
+
+    # # Display the heatmap
+    # st.plotly_chart(fig)
     
 elif selected_option == "Recharge":
     custom_title("How much groundwater recharge is there in the Xwulqw’selu watershed?", 28)
