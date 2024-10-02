@@ -337,17 +337,40 @@ elif selected_option == "Recharge":
     Below is a map of the average monthly recharge across the watershed. You can change which month you want to look at or zoom into different parts of the watershed...         
     
     """)
+    # Define the pixel area in square meters
+    pixel_area_m2 = 300 * 300  # Each pixel is 300x300 meters, so 90,000 m²
+
+    # Days per month (for conversion from m³/day to m³/month)
+    days_in_month = {
+        1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30,
+        7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31
+    }
+
+    # Convert recharge from m³/day to mm/month for each pixel
+    def convert_recharge_to_mm_per_month(recharge_m3_per_day, month, pixel_area_m2):
+        days = days_in_month[month]  # Get number of days in the selected month
+        recharge_m3_per_month = recharge_m3_per_day * days  # Convert to m³/month
+        recharge_mm_per_month = (recharge_m3_per_month / pixel_area_m2) * 1000  # Convert to mm/month
+        return recharge_mm_per_month
+
+    # Select the recharge month and convert recharge to mm/month
     recharge_months = list(monthly_recharge_means.keys())
     recharge_month_names = [month_names[m - 1] for m in recharge_months]
 
     selected_recharge_month_name = st.selectbox("Select Month", recharge_month_names)
     selected_recharge_month = recharge_months[recharge_month_names.index(selected_recharge_month_name)]
-    
-    recharge_grid = monthly_recharge_means[selected_recharge_month]
 
-    # Create heatmap for recharge
+    # Assume monthly_recharge_means[selected_recharge_month] is a grid (e.g., a 2D array) of m³/day values
+    recharge_grid_m3_per_day = monthly_recharge_means[selected_recharge_month]
+
+    # Convert the recharge grid to mm/month for each pixel (element-wise conversion)
+    recharge_grid_mm_per_month = [[convert_recharge_to_mm_per_month(value, selected_recharge_month, pixel_area_m2)
+                                for value in row]
+                                for row in recharge_grid_m3_per_day]
+
+    # Create heatmap for recharge in mm/month
     fig_recharge = go.Figure(data=go.Heatmap(
-        z=recharge_grid,
+        z=recharge_grid_mm_per_month,  # Using the converted recharge values in mm/month
         colorscale='viridis',
         colorbar=dict(
             title='Recharge [mm/month]',
@@ -363,11 +386,12 @@ elif selected_option == "Recharge":
         title=f'Monthly Recharge - {selected_recharge_month_name}',
         xaxis_title='Column',
         yaxis_title='Row',
-        yaxis=dict(autorange='reversed'),  # Reverse y-axis
+        yaxis=dict(autorange='reversed'),  # Reverse y-axis for heatmap
         width=800,
         height=600,
     )
-    
+
+    # Display the plotly heatmap in Streamlit
     st.plotly_chart(fig_recharge, use_container_width=True)
     
 elif selected_option == "View Report":
