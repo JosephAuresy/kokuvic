@@ -11,6 +11,7 @@ from folium import plugins
 from folium import GeoJson  
 from folium.plugins import MousePosition
 from shapely.geometry import Point
+from PIL import Image
 
 # Set the title and favicon that appear in the browser's tab bar.
 st.set_page_config(
@@ -254,6 +255,18 @@ if selected_option == "Watershed models":
     # Render the Folium map in Streamlit
     st.title("Watershed Map")
     st_folium(m, width=700, height=600)  
+
+    # Set the data folder using Path
+    data_folder = Path(__file__).parent / 'data'
+    
+    # List of image file names
+    image_files = ['Slide1.jpg', 'Slide2.jpg', 'Slide3.jpg']
+    
+    # Load and display the images using Path
+    for image_file in image_files:
+        image_path = data_folder / image_file  # Use Path to construct the full path
+        image = Image.open(image_path)
+        st.image(image, caption=image_file, use_column_width=True)
 
 
 elif selected_option == "Water interactions":
