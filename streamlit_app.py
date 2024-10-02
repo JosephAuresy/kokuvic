@@ -281,34 +281,40 @@ elif selected_option == "Water interactions":
     stat_type = st.radio("Statistic Type", ['Average Rate [m³/day]', 'Standard Deviation'], index=0)
 
     df_filtered = monthly_stats[monthly_stats['Month'] == selected_month]
-   
-    # Calculate the coordinates of each cell's center
-    cell_size = 300  # Size of each grid cell in meters
+
+    water_interaction_dict = {}
+    
+    # Iterate through df_filtered to assign water interaction values
+    for _, row in df_filtered.iterrows():
+        # Calculate the column index (0-based)
+        column_index = int(row['Column']) - 1  # Adjusting for zero-based indexing
+        # Calculate the row index (0-based)
+        row_number = int(row['Row']) - 1  # Adjusting for zero-based indexing
+    
+        # Store the corresponding value in the dictionary
+        water_interaction_dict[(row_number, column_index)] = row['Average Rate']
+    
+    # Step 2: Create GeoDataFrame for water interactions
     geometry = []
     
-    for _, row in df_filtered.iterrows():
-        row_index = int(row['Row']) - 1  # Adjust for zero-based indexing
-        column_index = int(row['Column']) - 1  # Adjust for zero-based indexing
+    # Create geometry for each cell in the grid_gdf and assign water interaction values
+    for row_index, row in grid_gdf.iterrows():
+        x, y = row.geometry.centroid.x, row.geometry.centroid.y
+        water_value = water_interaction_dict.get((row_index // grid_gdf.shape[1], row_index % grid_gdf.shape[1]), 0)  # Default to 0 if no value found
+        geometry.append(Point(x, y))
     
-        # Calculate the x and y coordinates of the cell's center
-        x_coord = grid_gdf.total_bounds[0] + (column_index + 0.5) * cell_size
-        y_coord = grid_gdf.total_bounds[1] + (row_index + 0.5) * cell_size
+    # Create a new GeoDataFrame for visualization
+    gdf_water_interactions = gpd.GeoDataFrame(
+        {
+            'Water Interaction Value': [water_interaction_dict.get((i // grid_gdf.shape[1], i % grid_gdf.shape[1]), 0) for i in range(len(geometry))],
+        },
+        geometry=geometry,
+        crs="EPSG:32610"
+    )
     
-        # Create a Point geometry
-        geometry.append(Point(x_coord, y_coord))
-    
-    # Create GeoDataFrame
-    gdf_filtered = gpd.GeoDataFrame(df_filtered, geometry=geometry, crs="EPSG:32610")
-    
-    # Save the GeoDataFrame as a shapefile
-    shapefile_path = "water_interactions.shp"
-    gdf_filtered.to_file(shapefile_path)
-    
-    # Define the coordinates for Duncan, BC
+    # Step 3: Create a Folium map centered on Duncan
     duncan_lat = 48.67  # Latitude
     duncan_lon = -123.79  # Longitude
-    
-    # Create a Folium map centered on Duncan
     m = folium.Map(location=[duncan_lat, duncan_lon], zoom_start=11, control_scale=True)
     
     # Add a marker for Duncan
@@ -321,10 +327,10 @@ elif selected_option == "Water interactions":
         style_function=lambda x: {'color': 'blue', 'weight': 1},
     ).add_to(m)
     
-    # Prepare heatmap data using the geometry from the filtered GeoDataFrame
+    # Prepare heatmap data using water interaction values
     heatmap_data = [
-        [row.geometry.y, row.geometry.x, row['Average Rate']]
-        for _, row in gdf_filtered.iterrows()
+        [row.geometry.y, row.geometry.x, row['Water Interaction Value']]
+        for _, row in gdf_water_interactions.iterrows()
     ]
     
     # Add the heatmap layer to the map
@@ -343,6 +349,7 @@ elif selected_option == "Water interactions":
     # Render the Folium map in Streamlit
     st.title("Water Interactions Map")
     st_folium(m, width=700, height=600)
+    
 
     # grid = np.full((int(df_filtered['Row'].max()), int(df_filtered['Column'].max())), np.nan)
 
