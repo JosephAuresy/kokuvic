@@ -308,11 +308,14 @@ elif selected_option == "Water interactions":
     # Save the GeoDataFrame as a shapefile
     shapefile_path = "water_interactions.shp"
     gdf_filtered.to_file(shapefile_path)
+
+    # Center the Folium map on the grid layer
+    center_lat = (miny + maxy) / 2
+    center_lon = (minx + maxx) / 2
     
-    # Display heatmap as before
     # Create a Folium map
-    m = folium.Map(location=[(miny + maxy) / 2, (minx + maxx) / 2], zoom_start=11, control_scale=True)
-    
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=11, control_scale=True)
+
     # Add the grid as a GeoJSON layer to the map
     folium.GeoJson(
         grid_gdf,
