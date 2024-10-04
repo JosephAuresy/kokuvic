@@ -529,6 +529,6 @@ elif selected_option == "View Report":
     #     mime="application/pdf"
     # )
     
-    iframe_width, iframe_height = get_iframe_dimensions()
-    st.markdown(f'<iframe src="data:application/pdf;base64,{pdf_base64}" width="{iframe_width}" height="{iframe_height}" style="border:none;"></iframe>', unsafe_allow_html=True)
+    # iframe_width, iframe_height = get_iframe_dimensions()
+    # st.markdown(f'<iframe src="data:application/pdf;base64,{pdf_base64}" width="{iframe_width}" height="{iframe_height}" style="border:none;"></iframe>', unsafe_allow_html=True)
 
