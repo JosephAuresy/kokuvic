@@ -256,47 +256,47 @@ if selected_option == "Watershed models":
     st.title("Watershed Map")
     st_folium(m, width=700, height=600)  
     
-    # Set the data folder using Path
-    data_folder = Path(__file__).parent / 'data'
+    # # Set the data folder using Path
+    # data_folder = Path(__file__).parent / 'data'
     
-    # Define the updated image files and their corresponding captions or messages
-    image_files = ['1_physical_model.jpg', '2_low_flow_river.jpg', '3_monitoring_data.jpg', '4_meeting_ideas.jpg']
-    captions = [
-        "Physical Model Explanation",
-        "Low Flow in River",
-        "Monitoring Data Overview",
-        "Meeting Ideas Summary"
-    ]
+    # # Define the updated image files and their corresponding captions or messages
+    # image_files = ['1_physical_model.jpg', '2_low_flow_river.jpg', '3_monitoring_data.jpg', '4_meeting_ideas.jpg']
+    # captions = [
+    #     "Physical Model Explanation",
+    #     "Low Flow in River",
+    #     "Monitoring Data Overview",
+    #     "Meeting Ideas Summary"
+    # ]
     
-    # Set up the layout for small images (small panel)
-    st.title("Interactive Image Viewer")
-    st.write("Select an image to see a larger view and an explanation.")
+    # # Set up the layout for small images (small panel)
+    # st.title("Interactive Image Viewer")
+    # st.write("Select an image to see a larger view and an explanation.")
     
-    # Create columns for displaying small images
-    cols = st.columns(4)  # 4 images, each in its own column
-    selected_image = None  # To store which image is selected
+    # # Create columns for displaying small images
+    # cols = st.columns(4)  # 4 images, each in its own column
+    # selected_image = None  # To store which image is selected
     
-    # Display the small images with buttons
-    for i, image_file in enumerate(image_files):
-        with cols[i]:
-            # Load each image
-            image_path = data_folder / image_file
-            image = Image.open(image_path)
+    # # Display the small images with buttons
+    # for i, image_file in enumerate(image_files):
+    #     with cols[i]:
+    #         # Load each image
+    #         image_path = data_folder / image_file
+    #         image = Image.open(image_path)
             
-            # Display the small image with a button
-            st.image(image, caption=f"{image_file}", width=100)
+    #         # Display the small image with a button
+    #         st.image(image, caption=f"{image_file}", width=100)
             
-            # When the button is clicked, the corresponding image and message are selected
-            if st.button(f"Show {image_file}"):
-                selected_image = image
-                selected_caption = captions[i]
+    #         # When the button is clicked, the corresponding image and message are selected
+    #         if st.button(f"Show {image_file}"):
+    #             selected_image = image
+    #             selected_caption = captions[i]
     
-    # Display the selected image in a larger panel (if selected)
-    if selected_image:
-        st.image(selected_image, caption=selected_caption, use_column_width=True)
-        st.write(selected_caption)
-    else:
-        st.write("Click on an image to see a larger view and explanation.")
+    # # Display the selected image in a larger panel (if selected)
+    # if selected_image:
+    #     st.image(selected_image, caption=selected_caption, use_column_width=True)
+    #     st.write(selected_caption)
+    # else:
+    #     st.write("Click on an image to see a larger view and explanation.")
 
 elif selected_option == "Water interactions":
     custom_title("How groundwater and surface water interact in the Xwulqw’selu watershed?", 28)
