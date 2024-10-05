@@ -255,6 +255,8 @@ if selected_option == "Watershed models":
     # Render the Folium map in Streamlit
     st.title("Watershed Map")
     st_folium(m, width=700, height=600)  
+
+
     
 elif selected_option == "Water interactions":
     custom_title("How groundwater and surface water interact in the Xwulqw’selu watershed?", 28)
