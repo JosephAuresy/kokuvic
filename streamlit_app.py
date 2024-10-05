@@ -259,35 +259,45 @@ if selected_option == "Watershed models":
     # Set the data folder using Path
     data_folder = Path(__file__).parent / 'data'
     
-    # Define the image file name and the corresponding message for Slide4
-    slide4_file = 'Slide4.jpg'
-    slide4_message = "Simplified explanation of the models"
+    # Define image files and their corresponding captions or messages
+    image_files = ['Slide1.jpg', 'Slide2.jpg', 'Slide3.jpg', 'Slide4.jpg']
+    captions = [
+        "Explanation for Slide 1",
+        "Explanation for Slide 2",
+        "Explanation for Slide 3",
+        "Simplified explanation of the models (Slide 4)"
+    ]
     
-    # User instructions
+    # Set up the layout for small images (small panel)
     st.title("Interactive Image Viewer")
-    st.write("Click the button below to see a simplified explanation of the model.")
+    st.write("Select an image to see a larger view and an explanation.")
     
-    # Load and display Slide4 image using Path
-    slide4_path = data_folder / slide4_file  # Use Path to construct the full path
-    slide4_image = Image.open(slide4_path)
+    # Create columns for displaying small images
+    cols = st.columns(4)  # 4 images, each in its own column
+    selected_image = None  # To store which image is selected
     
-    # Show Slide4 image
-    st.image(slide4_image, caption=slide4_file, use_column_width=True)
+    # Display the small images with buttons
+    for i, image_file in enumerate(image_files):
+        with cols[i]:
+            # Load each image
+            image_path = data_folder / image_file
+            image = Image.open(image_path)
+            
+            # Display the small image with a button
+            st.image(image, caption=f"{image_file}", width=100)
+            
+            # When the button is clicked, the corresponding image and message are selected
+            if st.button(f"Show {image_file}"):
+                selected_image = image
+                selected_caption = captions[i]
     
-    # Button to show the message for Slide4
-    if st.button("Show explanation for Slide 4"):
-        st.write(slide4_message)
+    # Display the selected image in a larger panel (if selected)
+    if selected_image:
+        st.image(selected_image, caption=selected_caption, use_column_width=True)
+        st.write(selected_caption)
+    else:
+        st.write("Click on an image to see a larger view and explanation.")
     
-    # List of other image file names
-    image_files = ['Slide1.jpg', 'Slide2.jpg', 'Slide3.jpg']
-    
-    # Load and display the other images using Path
-    st.write("Other images:")
-    for other_image_file in image_files:
-        other_image_path = data_folder / other_image_file  # Use Path to construct the full path
-        other_image = Image.open(other_image_path)
-        st.image(other_image, caption=other_image_file, use_column_width=True)
-
 elif selected_option == "Water interactions":
     custom_title("How groundwater and surface water interact in the Xwulqw’selu watershed?", 28)
 
