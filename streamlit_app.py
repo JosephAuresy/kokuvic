@@ -264,7 +264,7 @@ if selected_option == "Watershed models":
     captions = [
         "Physical Model: This physical model provides a straightforward way to illustrate the complex interactions between groundwater and surface water, including the effects of pumping. Through this interactive web application, users can deepen their understanding of these dynamics and better interpret the complex results emerging from the watershed's behavior.",
         
-        "River low flows: Reduced water levels during dry periods are evident in the low flow conditions of the river. These conditions highlight the importance of studying low flows, which are critical for understanding drought impacts, water resource availability, and the ecological health of the watershed.",
+        "River Low Flows: Reduced water levels during dry periods are evident in the low flow conditions of the river. These conditions highlight the importance of studying low flows, which are critical for understanding drought impacts, water resource availability, and the ecological health of the watershed.",
         
         "Monitoring Data: Accurate data from field monitoring activities plays a pivotal role in capturing real-time watershed conditions. The success of these monitoring efforts enhances our ability to track changes over time, offering valuable insights into watershed dynamics and informing evidence-based management strategies.",
         
