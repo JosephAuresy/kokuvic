@@ -262,17 +262,13 @@ if selected_option == "Watershed models":
     # Define the updated image files and their corresponding captions or messages
     image_files = ['1_physical_model.jpg', '2_low_flow_river.jpg', '3_monitoring_data.jpg', '4_meeting_ideas.jpg']
     captions = [
-        "Physical Model:": 
-            "This physical model provides a straightforward way to illustrate the complex interactions between groundwater and surface water, including the effects of pumping. Through this interactive web application, users can deepen their understanding of these dynamics and better interpret the complex results emerging from the watershed's behavior.",
+        "Physical Model": "This physical model provides a straightforward way to illustrate the complex interactions between groundwater and surface water, including the effects of pumping. Through this interactive web application, users can deepen their understanding of these dynamics and better interpret the complex results emerging from the watershed's behavior.",
         
-        "Low Flow in River:": 
-            "Reduced water levels during dry periods are evident in the low flow conditions of the river. These conditions highlight the importance of studying low flows, which are critical for understanding drought impacts, water resource availability, and the ecological health of the watershed.",
+        "Low Flow in River": "Reduced water levels during dry periods are evident in the low flow conditions of the river. These conditions highlight the importance of studying low flows, which are critical for understanding drought impacts, water resource availability, and the ecological health of the watershed.",
         
-        "Monitoring Data:": 
-            "Accurate data from field monitoring activities plays a pivotal role in capturing real-time watershed conditions. The success of these monitoring efforts enhances our ability to track changes over time, offering valuable insights into watershed dynamics and informing evidence-based management strategies.",
+        "Monitoring Data Overview": "Accurate data from field monitoring activities plays a pivotal role in capturing real-time watershed conditions. The success of these monitoring efforts enhances our ability to track changes over time, offering valuable insights into watershed dynamics and informing evidence-based management strategies.",
         
-        "Meeting Ideas:": 
-            "The exchange of diverse ideas during meetings drives the development of innovative projects that aim to improve the health of the watershed. Collaborative efforts such as these contribute to creating long-term solutions that promote sustainability and resilience in watershed management."
+        "Meeting Ideas Summary": "The exchange of diverse ideas during meetings drives the development of innovative projects that aim to improve the health of the watershed. Collaborative efforts such as these contribute to creating long-term solutions that promote sustainability and resilience in watershed management."
     ]
     
     # Set up the layout for small images (small panel)
