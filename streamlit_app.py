@@ -259,13 +259,13 @@ if selected_option == "Watershed models":
     # Set the data folder using Path
     data_folder = Path(__file__).parent / 'data'
     
-    # Define image files and their corresponding captions or messages
-    image_files = ['Slide1.jpg', 'Slide2.jpg', 'Slide3.jpg', 'Slide4.jpg']
+    # Define the updated image files and their corresponding captions or messages
+    image_files = ['1_physical_model.jpg', '2_low_flow_river.jpg', '3_monitoring_data.jpg', '4_meeting_ideas.jpg']
     captions = [
-        "Explanation for Slide 1",
-        "Explanation for Slide 2",
-        "Explanation for Slide 3",
-        "Simplified explanation of the models (Slide 4)"
+        "Physical Model Explanation",
+        "Low Flow in River",
+        "Monitoring Data Overview",
+        "Meeting Ideas Summary"
     ]
     
     # Set up the layout for small images (small panel)
@@ -297,7 +297,7 @@ if selected_option == "Watershed models":
         st.write(selected_caption)
     else:
         st.write("Click on an image to see a larger view and explanation.")
-    
+
 elif selected_option == "Water interactions":
     custom_title("How groundwater and surface water interact in the Xwulqw’selu watershed?", 28)
 
